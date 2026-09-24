@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>База знаний | АСТРА</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --brand-teal: #0f766e;
+            --brand-teal-light: #f0fdfa;
+            --brand-teal-border: #ccfbf1;
+            --bg-body: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #cbd5e1;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-body); color: var(--text-main); padding-top: 85px; line-height: 1.6; }
+
+        /* --- ШАПКА --- */
+        header { 
+            position: fixed; 
+            top: 0; left: 0; right: 0; 
+            background: var(--card-bg); 
+            border-bottom: 1px solid var(--border-color); 
+            height: 75px; 
+            z-index: 100; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02); 
+            display: flex;
+            justify-content: center;
+        }
+        
+        .header-container {
+            width: 100%;
+            max-width: 1240px;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 100%;
+        }
+        
+        .header-logo {
+            display: block;
+            width: 135px;
+            height: 48px;
+            text-decoration: none;
+        }
+        .header-logo svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .nav-links { display: flex; gap: 30px; list-style: none; height: 100%; }
+        .nav-links li { height: 100%; display: flex; align-items: center; }
+        .nav-links a { text-decoration: none; color: var(--text-main); font-size: 14px; font-weight: 500; height: 100%; display: flex; align-items: center; border-bottom: 3px solid transparent; transition: color 0.2s; }
+        .nav-links a:hover { color: var(--brand-teal); }
+        .nav-links a.active { color: var(--brand-teal); border-bottom-color: var(--brand-teal); }
+
+        .container { max-width: 1240px; margin: 0 auto; padding: 40px 20px 80px 20px; }
+
+        /* --- БИБЛИОТЕКА ХЕРОУ --- */
+        .library-hero {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 40px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .library-titles span {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--brand-teal);
+            margin-bottom: 6px;
+            display: block;
+        }
+        .library-titles h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 10px;
+        }
+        .library-titles p {
+            font-size: 15px;
+            color: var(--text-muted);
+            max-width: 700px;
+        }
+
+        .stats-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 18px 26px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-width: 240px;
+        }
+        .stat-row {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+        }
+        .stat-num {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--brand-teal);
+            line-height: 1;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .section-tag {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--brand-teal);
+            margin-bottom: 4px;
+            display: block;
+        }
+        .section-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: var(--text-main);
+        }
+        .base-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        /* --- ПОИСК И ФИЛЬТРЫ --- */
+        .toolbar-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .search-box { position: relative; width: 100%; max-width: 400px; }
+        .search-box input { width: 100%; padding: 12px 20px 12px 40px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 14px; outline: none; color: var(--text-main); background: var(--card-bg); font-family: 'Inter', sans-serif; }
+        .search-box svg { position: absolute; left: 14px; top: 12px; color: #94a3b8; }
+        .results-count { font-size: 13px; font-weight: 600; color: var(--text-muted); }
+        
+        .filters { display: flex; gap: 8px; margin-bottom: 35px; flex-wrap: wrap; }
+        .filter-btn { 
+            background: var(--card-bg); 
+            border: 1px solid var(--border-color); 
+            padding: 9px 18px; 
+            border-radius: 20px; 
+            font-size: 14px; 
+            font-weight: 600; 
+            font-family: 'Inter', sans-serif;
+            color: var(--text-main); 
+            cursor: pointer; 
+            transition: all 0.2s; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02); 
+        }
+        .filter-btn span { background: #e2e8f0; color: var(--text-muted); font-size: 12px; padding: 2px 7px; border-radius: 10px; font-weight: 600; }
+        .filter-btn:hover { background: #f8fafc; border-color: #94a3b8; }
+        .filter-btn.active { background: var(--brand-teal); color: white; border-color: var(--brand-teal); }
+        .filter-btn.active span { background: rgba(255,255,255,0.25); color: white; }
+
+        /* --- СЕТКА КАРТОЧЕК --- */
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+        .card { background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border-color); overflow: hidden; display: flex; flex-direction: column; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 6px 24px rgba(15, 23, 42, 0.05); text-decoration: none; }
+        .card:hover { transform: translateY(-4px); box-shadow: 0 14px 34px rgba(15, 23, 42, 0.09); border-color: #94a3b8; }
+        
+        .card-img-wrap { height: 210px; overflow: hidden; border-bottom: 1px solid var(--border-color); position: relative; background: #e2e8f0; display: flex; align-items: center; justify-content: center; }
+        .card-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        
+        .card-content { padding: 28px; display: flex; flex-direction: column; flex-grow: 1; }
+        .card-tag { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--brand-teal); letter-spacing: 0.5px; margin-bottom: 10px; }
+        .card-title { font-size: 18px; font-weight: 700; color: var(--text-main); line-height: 1.4; margin-bottom: 12px; }
+        .card-desc { font-size: 14px; color: var(--text-muted); line-height: 1.5; margin-bottom: 25px; flex-grow: 1; }
+        
+        /* Иконки даты и времени */
+        .card-meta { display: flex; gap: 15px; font-size: 12px; color: #94a3b8; margin-bottom: 20px; align-items: center; }
+        .card-meta span { display: inline-flex; align-items: center; gap: 6px; line-height: 1; }
+        .card-meta svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; vertical-align: middle; }
+        
+        .card-read { font-size: 14px; font-weight: 600; color: var(--text-main); display: flex; align-items: center; gap: 6px; transition: color 0.2s, gap 0.2s; }
+        .card:hover .card-read { color: var(--brand-teal); gap: 10px; }
+
+        /* --- СТРАНИЦА ЧТЕНИЯ СТАТЬИ --- */
+        #article-page { display: none; padding-bottom: 100px; animation: fadeIn 0.4s ease; }
+        .article-wrap { max-width: 840px; margin: 0 auto; background: var(--card-bg); padding: 50px 70px; border-radius: 16px; border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05); }
+        .back-btn { margin-bottom: 30px; color: var(--text-muted); cursor: pointer; display: inline-flex; align-items: center; gap: 5px; font-size: 14px; font-weight: 500; transition: color 0.2s; }
+        .back-btn:hover { color: var(--brand-teal); }
+        
+        #art-title { font-family: 'Montserrat', sans-serif; font-size: 32px; font-weight: 800; margin-bottom: 20px; line-height: 1.3; color: var(--text-main); }
+        #art-img { width: 100%; height: 380px; object-fit: cover; border-radius: 12px; margin: 30px 0; border: 1px solid var(--border-color); background: #e2e8f0; }
+        
+        #art-body h2 { font-size: 24px; font-weight: 700; margin: 45px 0 20px; color: var(--text-main); border-bottom: 2px solid var(--bg-body); padding-bottom: 12px; }
+        #art-body h3 { font-size: 20px; font-weight: 600; margin: 35px 0 15px; color: var(--text-main); }
+        #art-body p { font-size: 16px; line-height: 1.8; margin-bottom: 20px; color: #334155; }
+        #art-body strong { color: var(--text-main); font-weight: 600; }
+        
+        /* Стили перелинковки */
+        #art-body a.seo-link { color: var(--brand-teal); text-decoration: underline; font-weight: 500; cursor: pointer; transition: color 0.2s; }
+        #art-body a.seo-link:hover { color: #115e59; }
+
+        /* Типографика блоков */
+        .info-box { background-color: var(--brand-teal-light); border: 1px solid var(--brand-teal-border); border-radius: 12px; padding: 25px 30px; margin: 35px 0; }
+        .info-box-header { display: inline-flex; align-items: center; background-color: var(--card-bg); padding: 6px 16px; border-radius: 8px; font-weight: 700; color: var(--brand-teal); margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.04); font-size: 15px; border: 1px solid var(--brand-teal-border); }
+        .info-box-header svg { width: 18px; height: 18px; margin-right: 8px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+
+        #art-body ul.custom-list { list-style: none; padding-left: 0; margin-bottom: 25px; }
+        #art-body ul.custom-list li { position: relative; padding-left: 28px; margin-bottom: 14px; font-size: 16px; color: #334155; line-height: 1.7; }
+        #art-body ul.custom-list li::before { content: ''; position: absolute; left: 2px; top: 10px; width: 10px; height: 10px; border: 2px solid var(--brand-teal); border-radius: 50%; box-sizing: border-box; }
+        #art-body .info-box ul.custom-list li::before { background-color: var(--brand-teal); border: none; width: 6px; height: 6px; top: 12px; left: 4px; }
+
+        .table-responsive { overflow-x: auto; margin: 35px 0; border-radius: 12px; border: 1px solid var(--border-color); }
+        .custom-table { width: 100%; border-collapse: collapse; background: var(--card-bg); text-align: left; }
+        .custom-table th { background: #f8fafc; color: var(--text-main); font-size: 12px; font-weight: 700; text-transform: uppercase; padding: 16px 20px; border-bottom: 1px solid var(--border-color); letter-spacing: 0.5px; }
+        .custom-table td { padding: 18px 20px; border-bottom: 1px solid #f1f5f9; color: #475569; font-size: 15px; vertical-align: top; line-height: 1.6; }
+        .custom-table tr:last-child td { border-bottom: none; }
+        
+        .cta-banner { margin-top: 60px; background: #f0fdfa; border: 1px solid var(--brand-teal-border); padding: 40px; border-radius: 12px; text-align: center; }
+        .cta-banner h2 { margin-top: 0; color: var(--brand-teal); border: none; padding: 0; }
+        .cta-btn { display: inline-block; background: var(--brand-teal); color: white; padding: 14px 30px; border-radius: 8px; font-weight: 600; text-decoration: none; margin-top: 20px; transition: transform 0.2s; box-shadow: 0 4px 12px rgba(15, 118, 110, 0.2); }
+        .cta-btn:hover { transform: translateY(-2px); background: #115e59; }
+
+        @keyframes fadeIn { from {opacity: 0; transform: translateY(10px);} to {opacity: 1; transform: translateY(0);} }
+        @media (max-width: 992px) { .grid, .base-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 768px) { .grid, .base-grid { grid-template-columns: 1fr; } .toolbar-top, .library-hero { flex-direction: column; align-items: flex-start; gap: 20px; } .search-box { max-width: 100%; } .nav-links { display: none; } .article-wrap { padding: 30px 20px; } #art-title { font-size: 24px; } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <a class="header-logo" href="https://a-astra.ru" onclick="showCatalog(); return false;">
+                <svg width="100%" height="100%" viewBox="0 0 126 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <mask id="mask0_205_3" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="30" y="54" width="65" height="2">
+                    <path d="M94.1812 54.0723H30.9277V55.3247H94.1812V54.0723Z" fill="white"></path>
+                    </mask>
+                    <g mask="url(#mask0_205_3)">
+                    <mask id="mask1_205_3" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="30" y="54" width="65" height="2">
+                    <path d="M94.2637 54.064H30.8418V55.4136H94.2637V54.064Z" fill="white"></path>
+                    </mask>
+                    <g mask="url(#mask1_205_3)">
+                    <mask id="mask2_205_3" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="30" y="54" width="65" height="2">
+                    <path d="M94.1812 54.0723H30.9277V55.3247H94.1812V54.0723Z" fill="white"></path>
+                    </mask>
+                    <g mask="url(#mask2_205_3)">
+                    <path d="M30.9277 54.0723H94.1798V55.3247H30.9277V54.0723Z" fill="#1E3A5F"></path>
+                    </g>
+                    </g>
+                    </g>
+                    <mask id="mask3_205_3" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="38" height="37">
+                    <path d="M37.4165 0H0.662109V36.0503H37.4165V0Z" fill="white"></path>
+                    </mask>
+                    <g mask="url(#mask3_205_3)">
+                    <mask id="mask4_205_3" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="38" height="37">
+                    <path d="M19.0019 0L37.3416 36.0503H0.662109L19.0019 0Z" fill="white"></path>
+                    </mask>
+                    <g mask="url(#mask4_205_3)">
+                    <mask id="mask5_205_3" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="-1" width="38" height="38">
+                    <path d="M37.4441 -0.0244141H0.560547V36.0719H37.4441V-0.0244141Z" fill="white"></path>
+                    </mask>
+                    <g mask="url(#mask5_205_3)">
+                    <mask id="mask6_205_3" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="38" height="37">
+                    <path d="M37.3312 0H0.662109V36.0503H37.3312V0Z" fill="white"></path>
+                    </mask>
+                    <g mask="url(#mask6_205_3)">
+                    <mask id="mask7_205_3" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="38" height="37">
+                    <path d="M19.0019 0L37.3416 36.0503H0.662109L19.0019 0Z" fill="white"></path>
+                    </mask>
+                    <g mask="url(#mask7_205_3)">
+                    <path d="M0.662109 0H37.2756V36.0503H0.662109V0Z" fill="#1E3A5F"></path>
+                    </g>
+                    </g>
+                    </g>
+                    </g>
+                    </g>
+                    <path d="M1.71096 47.4602H1.00832V49.2298H0V44.8374H1.00832V46.6137H1.73767L2.89216 44.8374H3.96429L2.52785 46.9572L4.00732 49.2291H2.85283L1.71096 47.4602Z" fill="#1D1F23"></path>
+                    <path d="M8.5971 48.2878H6.55671L6.16866 49.2293H5.12695L7.08424 44.8369H8.08737L10.0521 49.2293H8.98514L8.5971 48.2878ZM8.27731 47.5161L7.57987 45.8348L6.88391 47.5161H8.27731Z" fill="#1D1F23"></path>
+                    <path d="M15.1342 44.8367V49.2291H14.1311V47.648C13.7505 47.786 13.3966 47.855 13.0701 47.855C12.481 47.855 12.0291 47.714 11.7153 47.4313C11.4014 47.1494 11.2441 46.742 11.2441 46.21V44.8359H12.2473V46.0973C12.2473 46.3985 12.3274 46.6255 12.4877 46.7791C12.6494 46.9312 12.8831 47.0077 13.1888 47.0077C13.5234 47.0077 13.8373 46.9424 14.1304 46.8125V44.8359H15.1342V44.8367Z" fill="#1D1F23"></path>
+                    <path d="M20.8465 48.4139V49.2293H17.4453V44.8369H20.7641V45.6538H18.4551V46.6065H20.4948V47.3974H18.4551V48.4146H20.8465V48.4139Z" fill="#1D1F23"></path>
+                    <path d="M24.9568 49.305C24.5094 49.305 24.1043 49.2078 23.743 49.0134C23.3809 48.819 23.0968 48.5497 22.889 48.2054C22.682 47.8604 22.5781 47.4694 22.5781 47.0331C22.5781 46.5983 22.682 46.2088 22.889 45.8645C23.096 45.5195 23.3809 45.2494 23.743 45.0543C24.1051 44.8592 24.5109 44.7612 24.962 44.7612C25.3427 44.7612 25.6862 44.8287 25.9934 44.963C26.3013 45.0966 26.5602 45.2888 26.7702 45.5395L26.1165 46.142C25.8197 45.7992 25.4525 45.6271 25.0132 45.6271C24.7417 45.6271 24.4983 45.6872 24.2839 45.8067C24.0702 45.9261 23.904 46.0923 23.7846 46.306C23.6658 46.5197 23.6072 46.7623 23.6072 47.0331C23.6072 47.3047 23.6658 47.548 23.7846 47.7625C23.904 47.9761 24.0702 48.1423 24.2839 48.2618C24.4983 48.3805 24.7409 48.4391 25.0132 48.4391C25.4525 48.4391 25.8205 48.2662 26.1165 47.919L26.7702 48.52C26.5602 48.776 26.3013 48.9704 25.9919 49.1054C25.6825 49.2382 25.3375 49.305 24.9568 49.305Z" fill="#1D1F23"></path>
+                    <path d="M31.973 45.6664H30.5677V49.2301H29.5646V45.6664H28.166V44.8369H31.9738V45.6664H31.973Z" fill="#1D1F23"></path>
+                    <path d="M36.8795 46.9401C37.1466 47.0188 37.3506 47.1486 37.4923 47.3282C37.6348 47.5085 37.7067 47.7303 37.7067 47.9944C37.7067 48.384 37.5591 48.6867 37.2638 48.9048C36.9685 49.1215 36.5471 49.2298 36.0002 49.2298H33.8359V44.8374H35.8808C36.3905 44.8374 36.7875 44.9361 37.0724 45.1327C37.3573 45.3293 37.499 45.6105 37.499 45.9741C37.499 46.1907 37.4448 46.3814 37.3358 46.5469C37.2274 46.7116 37.0753 46.8429 36.8795 46.9401ZM34.8472 46.6567H35.794C36.0151 46.6567 36.182 46.6122 36.2948 46.5217C36.4083 46.4319 36.4654 46.2983 36.4654 46.1225C36.4654 45.9518 36.4076 45.8205 36.2933 45.7292C36.1783 45.6372 36.0121 45.5905 35.794 45.5905H34.8472V46.6567ZM35.9624 48.4752C36.4387 48.4752 36.6776 48.2875 36.6776 47.9113C36.6776 47.547 36.4395 47.3653 35.9624 47.3653H34.8465V48.476H35.9624V48.4752Z" fill="#1D1F23"></path>
+                    <path d="M41.827 49.305C41.3707 49.305 40.9597 49.2063 40.5939 49.0097C40.2281 48.8131 39.9417 48.5423 39.7347 48.198C39.5277 47.853 39.4238 47.4642 39.4238 47.0331C39.4238 46.602 39.5277 46.214 39.7347 45.8697C39.9417 45.5247 40.2281 45.2532 40.5939 45.0565C40.9604 44.8599 41.3715 44.7612 41.827 44.7612C42.2826 44.7612 42.6922 44.8599 43.0572 45.0565C43.4215 45.2532 43.7079 45.5247 43.9164 45.8697C44.1256 46.214 44.231 46.602 44.231 47.0331C44.231 47.4642 44.1264 47.853 43.9164 48.198C43.7079 48.5423 43.4215 48.8131 43.0572 49.0097C42.6922 49.2071 42.2826 49.305 41.827 49.305ZM41.827 48.4391C42.086 48.4391 42.3197 48.3805 42.5282 48.2618C42.7374 48.1423 42.9021 47.9761 43.0216 47.7625C43.141 47.548 43.2011 47.3054 43.2011 47.0331C43.2011 46.7616 43.141 46.5189 43.0216 46.306C42.9021 46.093 42.7374 45.9261 42.5282 45.8067C42.3197 45.6872 42.086 45.6271 41.827 45.6271C41.5681 45.6271 41.3336 45.6872 41.1244 45.8067C40.9144 45.9261 40.7505 46.0923 40.631 46.306C40.5123 46.5197 40.4537 46.7623 40.4537 47.0331C40.4537 47.3047 40.5123 47.548 40.631 47.7625C40.7505 47.9761 40.9144 48.1423 41.1244 48.2618C41.3336 48.3798 41.5673 48.4391 41.827 48.4391Z" fill="#1D1F23"></path>
+                    <path d="M47.3594 47.1597H53.6334V47.7673H47.3594V47.1597Z" fill="#1D1F23"></path>
+                    <path d="M61.3882 44.8369V49.2293H60.371V47.4286H58.3766V49.2293H57.3594V44.8369H58.3766V46.5694H60.371V44.8369H61.3882Z" fill="#1D1F23"></path>
+                    <path d="M66.6823 48.2878H64.6426L64.2546 49.2293H63.2129L65.1702 44.8369H66.1733L68.138 49.2293H67.0711L66.6823 48.2878ZM66.3625 47.5161L65.6651 45.8348L64.9691 47.5161H66.3625Z" fill="#1D1F23"></path>
+                    <path d="M75.7435 44.8369V49.2293H69.9473V44.8369H70.9578V48.402H72.3438V44.8369H73.3543V48.402H74.7336V44.8369H75.7435Z" fill="#1D1F23"></path>
+                    <path d="M83.1346 49.305C82.6872 49.305 82.2821 49.2078 81.9207 49.0134C81.5587 48.819 81.2745 48.5497 81.0667 48.2054C80.8597 47.8604 80.7559 47.4694 80.7559 47.0331C80.7559 46.5983 80.8597 46.2088 81.0667 45.8645C81.2737 45.5195 81.5587 45.2494 81.9207 45.0543C82.2828 44.8592 82.6887 44.7612 83.1398 44.7612C83.5204 44.7612 83.8639 44.8287 84.1711 44.963C84.479 45.0966 84.738 45.2888 84.9479 45.5395L84.2943 46.142C83.9975 45.7992 83.6302 45.6271 83.191 45.6271C82.9194 45.6271 82.676 45.6872 82.4616 45.8067C82.2479 45.9261 82.0817 46.0923 81.9623 46.306C81.8436 46.5197 81.785 46.7623 81.785 47.0331C81.785 47.3047 81.8436 47.548 81.9623 47.7625C82.0817 47.9761 82.2479 48.1423 82.4616 48.2618C82.676 48.3805 82.9187 48.4391 83.191 48.4391C83.6302 48.4391 83.9982 48.2662 84.2943 47.919L84.9479 48.52C84.738 48.776 84.479 48.9704 84.1696 49.1054C83.8602 49.2382 83.5152 49.305 83.1346 49.305Z" fill="#1D1F23"></path>
+                    <path d="M90.1507 45.6664H88.7455V49.2301H87.7423V45.6664H86.3438V44.8369H90.1515V45.6664H90.1507Z" fill="#1D1F23"></path>
+                    <path d="M94.7643 48.2878H92.7247L92.3366 49.2293H91.2949L93.2522 44.8369H94.2553L96.22 49.2293H95.1539L94.7643 48.2878ZM94.4445 47.5161L93.7471 45.8348L93.0511 47.5161H94.4445Z" fill="#1D1F23"></path>
+                    <path d="M102.054 44.8369V49.2293H101.037V47.4286H99.0426V49.2293H98.0254V44.8369H99.0426V46.5694H101.037V44.8369H102.054Z" fill="#1D1F23"></path>
+                    <path d="M108.877 48.402V50.1397H107.936V49.2293H104.837V50.1397H103.896L103.902 48.402H104.078C104.341 48.3931 104.527 48.2002 104.636 47.824C104.745 47.4479 104.812 46.9107 104.837 46.211L104.888 44.8369H108.263V48.402H108.877ZM105.734 46.306C105.714 46.8291 105.669 47.2668 105.602 47.62C105.535 47.9739 105.432 48.2343 105.295 48.402H107.26V45.6664H105.754L105.734 46.306Z" fill="#1D1F23"></path>
+                    <path d="M113.796 48.2878H111.757L111.369 49.2293H110.326L112.283 44.8369H113.287L115.251 49.2293H114.185L113.796 48.2878ZM113.477 47.5161H112.779 45.8348H112.083 47.5161H113.477Z" fill="#1D1F23"></path>
+                    <path d="M118.959 44.8369C119.35 44.8369 119.687 44.9022 119.973 45.032C120.26 45.1619 120.481 45.3466 120.636 45.5856C120.79 45.8237 120.868 46.1049 120.868 46.4306C120.868 46.7534 120.791 47.0346 120.636 47.2757C120.481 47.5161 120.26 47.7001 119.973 47.8278C119.687 47.9554 119.349 48.0192 118.959 48.0192H118.076V49.2301H117.059V44.8377H118.959V44.8369ZM118.904 47.1897C119.21 47.1897 119.442 47.1244 119.6 46.993C119.759 46.861 119.839 46.6733 119.839 46.4306C119.839 46.1843 119.759 45.9959 119.6 45.8645C119.442 45.7325 119.21 45.6657 118.904 45.6657H118.077V47.1889H118.904V47.1897Z" fill="#1D1F23"></path>
+                    <path d="M125.998 45.6664H124.593V49.2301H123.59V45.6664H122.191V44.8369H125.999V45.6664H125.998Z" fill="#1D1F23"></path>
+                    <path d="M23.4019 31.6671H13.9033L12.0914 36.0506H7.23828L16.357 15.5918H21.0343L30.1834 36.0506H25.2145L23.4019 31.6671ZM21.9113 28.0716L18.6682 20.2372L15.4228 28.0716H21.9113Z" fill="white"></path>
+                    <path d="M50.1978 36.4024C48.1129 36.4024 46.2276 35.9498 44.5418 35.0439C42.8576 34.1372 41.5325 32.8803 40.5672 31.2732C39.6034 29.6654 39.1211 27.8476 39.1211 25.8213C39.1211 23.795 39.6026 21.978 40.5672 20.3709C41.5325 18.7631 42.8569 17.5062 44.5418 16.6002C46.2276 15.6936 48.1225 15.2402 50.2275 15.2402C52.0008 15.2402 53.6034 15.5526 55.0346 16.1766C56.4674 16.7998 57.6708 17.6961 58.645 18.8647L55.6052 21.6708C54.2214 20.0734 52.5068 19.2743 50.4605 19.2743C49.1939 19.2743 48.0639 19.5518 47.0697 20.1067C46.0762 20.6617 45.3024 21.4363 44.7466 22.4298C44.1916 23.4233 43.9142 24.5533 43.9142 25.8206C43.9142 27.0871 44.1916 28.2171 44.766 29.2113C45.3016 30.2048 46.0755 30.9787 47.0697 31.5344C48.0639 32.0894 49.1947 32.3669 50.4605 32.3669C52.5068 32.3669 54.2214 31.5581 55.6052 29.9407L58.645 32.7468C57.6701 33.9361 56.4622 34.8428 55.0205 35.4668C53.5789 36.09 51.9711 36.4024 50.1978 36.4024Z" fill="#1D1F23"></path>
+                    <path d="M79.8816 19.4485H73.3346V36.0506H68.6573V19.4485H62.1406V15.5918H79.8816V19.4485Z" fill="#1D1F23"></path>
+                    <path d="M93.8463 15.5918C95.6581 15.5918 97.2311 15.8938 98.5659 16.4985C99.9014 17.1017 100.929 17.9586 101.649 19.0694C102.371 20.1801 102.732 21.4956 102.732 23.0158C102.732 24.5161 102.371 25.8271 101.649 26.9482C100.929 28.0686 99.9014 28.9248 98.5659 29.5191C97.2311 30.1127 95.6581 30.4102 93.8463 30.4102H89.7254V36.0521H84.9902V15.5918H93.8463ZM93.5821 26.552C95.0052 26.552 96.087 26.2456 96.8275 25.6312C97.5679 25.0176 97.9382 24.1458 97.9382 23.0151C97.9382 21.8651 97.5679 20.9829 96.8275 20.3693C96.087 19.7557 95.0052 19.4485 93.5821 19.4485H89.7254V26.552H93.5821Z" fill="#1D1F23"></path>
+                    <path d="M118.496 31.8048H108.997L107.185 36.1883H102.332L111.451 15.7295H116.128L125.277 36.1883H120.308L118.496 31.8048ZM117.006 28.2092L113.762 20.3749L110.517 28.2092H117.006Z" fill="#1D1F23"></path>
+                </svg>
+            </a>
+
+            <ul class="nav-links">
+                <li><a href="https://a-astra.ru/">Главная</a></li>
+                <li><a href="#" class="active">Статьи</a></li>
+                <li><a href="https://a-astra.ru/o-nas">О нас</a></li>
+                <li><a href="https://a-astra.ru/nasha-produktsiya">Продукция</a></li>
+                <li><a href="https://a-astra.ru/kontakty">Контакты</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <div id="catalog-page">
+            <div class="library-hero">
+                <div class="library-titles">
+                    <span class="section-tag" style="font-size: 12px;">Библиотека</span>
+                    <h1>Все статьи</h1>
+                    <p>Рейтинги, обзоры и руководства о модульных зданиях, условиях, инфраструктуре и выборе бытовок.</p>
+                </div>
+                <div class="stats-box">
+                    <div class="stat-row">
+                        <div class="stat-num">16</div>
+                        <div class="stat-label">материалов</div>
+                    </div>
+                    <div class="stat-row">
+                        <div class="stat-num">4</div>
+                        <div class="stat-label">тематических направления</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 45px;">
+                 <span class="section-tag" style="font-size: 12px;">С чего начать</span>
+                <div class="section-title">Три базовых материала — выбор, практический расчет и проверка надежности</div>
+                <div class="base-grid" id="base-cards-container"></div>
+            </div>
+
+            <div class="toolbar-top">
+                <div class="search-box">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="search-input" placeholder="Поиск по заголовкам и темам">
+                </div>
+                <div class="results-count" id="results-count">Показано: 16</div>
+            </div>
+
+            <div class="filters" id="filter-buttons">
+                <button class="filter-btn active" data-category="all">Все <span>16</span></button>
+                <button class="filter-btn" data-category="Конструкция и цены">Конструкция и цены <span>4</span></button>
+                <button class="filter-btn" data-category="Комфорт и зима">Комфорт и зима <span>4</span></button>
+                <button class="filter-btn" data-category="Бизнес и офисы">Бизнес и офисы <span>4</span></button>
+                <button class="filter-btn" data-category="Логистика и сборка">Логистика и сборка <span>4</span></button>
+            </div>
+
+            <div class="grid" id="cards-container"></div>
+        </div>
+
+        <div id="article-page">
+            <div class="article-wrap">
+                <a class="back-btn" onclick="showCatalog()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                    Назад к списку статей
+                </a>
+                
+                <h1 id="art-title">Заголовок</h1>
+                
+                <div class="card-meta" style="margin-bottom: 30px;">
+                    <span><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> <span id="art-date">00.00.0000</span></span>
+                    <span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> <span id="art-time">0 мин</span></span>
+                </div>
+
+                <img id="art-img" src="" alt="Иллюстрация">
+
+                <div id="art-body"></div>
+
+                <div class="cta-banner">
+                    <h2>Нужен расчет стоимости объекта?</h2>
+                    <p style="margin-bottom: 0; color: var(--text-main);">Перейдите на официальный сайт АСТРА и получите смету без скрытых платежей.</p>
+                    <a href="https://a-astra.ru/" class="cta-btn">Перейти в каталог продукции</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const imagePaths = [
+            "1.jfif", "2.jfif", "3.jfif", "4.jfif",
+            "5.jfif", "6.jfif", "7.jfif", "8.jfif",
+            "9.jfif", "10.jfif", "11.jfif", "12.jfif",
+            "13.jfif", "14.jfif", "15.jfif", "16.jfif"
+        ];
+        
+        const articlesDB = [
+            {
+                id: 1, tag: "Конструкция и цены",
+                title: "Строительная бытовка металлическая: как выбрать надежный вагончик для рабочих и не переплатить",
+                date: "11.08.2026", time: "6 минут чтения", img: imagePaths[0],
+                desc: "Пошаговая схема выбора строительной бытовки. Отличия от деревянных каркасов, толщина швеллера и требования к утеплению.",
+                content: `
+                    <div class="info-box"><div class="info-box-header"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>Коротко о главном</div><ul class="custom-list"><li>Деревянные конструкции не подходят для многократных перевозок.</li><li>Основа надежности — <strong>металлический каркас для бытовки</strong> из гнутого швеллера.</li><li>Минимальный слой утепления для комфортной работы — от 100 мм базальтовой ваты.</li></ul></div>
+                    <p>Обустройство любой строительной площадки начинается с решения базового вопроса — где будет организован штаб и места отдыха. Если вам необходимо оперативно разместить бригаду, оптимальным решением станет <strong>строительная бытовка металлическая</strong>. В отличие от капитальных строений, она не требует заливки сложного фундамента и готова к эксплуатации сразу после выгрузки манипулятором на объекте.</p>
+                    <h2>Почему стальной профиль выигрывает у дерева?</h2>
+                    <p>Многие подрядчики, пытаясь сэкономить на старте, решают <a class="seo-link" onclick="openArticle(10)">купить вагончик для рабочих</a> из деревянных щитов. Однако такой подход оправдан только для дачников или разовых объектов на пару теплых месяцев. Если планируются регулярные переезды, конструкция из бруса быстро теряет жесткость, а двери перестают закрываться из-за перекоса геометрии.</p>
+                    <p>Для профессиональных задач необходим прочный <strong>металлический каркас для бытовки</strong>. Его основа варится из швеллера (100–120 мм) и горячекатаного уголка, что позволяет выдерживать многократные погрузочно-разгрузочные циклы без деформаций. Именно такие усиленные каркасы ложатся в основу долговечных временных зданий, которые служат десятилетиями (подробнее об этом читайте в материале про <a class="seo-link" onclick="openArticle(3)">сроки службы</a>).</p>
+                    <h2>Ключевые критерии выбора: на что смотреть перед заказом</h2>
+                    <ul class="custom-list">
+                        <li><strong>Внешняя защита:</strong> Классический <strong>вагончик для строителей</strong> обшивается оцинкованным профнастилом С-8. Он отлично противостоит ветровой нагрузке и не требует ежегодной покраски для защиты от коррозии.</li>
+                        <li><strong>Зимнее утепление:</strong> Для эксплуатации в условиях минусовых температур необходима качественная изоляция по всему контуру. Рулонная стекловата не подойдет — она быстро оседает. Ищите проекты с базальтовыми плитами толщиной не менее 100 мм и ветрозащитными мембранами.</li>
+                        <li><strong>Внутреннее зонирование:</strong> Если конструкция будет использоваться для руководящего состава (так называемая <strong>бытовка прорабская</strong>), деревянная вагонка внутри уступает место более практичным ЛДСП-панелям. Они легко моются и создают строгий офисный интерьер. Рационально разделить пространство на рабочую зону и тамбур для грязной обуви (схемы зонирования мы разбирали в статье про <a class="seo-link" onclick="openArticle(8)">планировки с тамбуром</a>).</li>
+                    </ul>
+                    <div class="info-box"><div class="info-box-header"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>Экспертиза компании АСТРА</div><p>Выбор временной инфраструктуры — это инвестиция в производительность вашей бригады. В компании АСТРА мы знаем, что на реальной стройке нет места компромиссам. Наше производство ориентировано на создание технологичных решений: от усиленных каркасов до пожаробезопасной отделки. АСТРА разрабатывает надежные модульные блоки, которые выдерживают суровые условия эксплуатации и экономят ваши деньги в долгосрочной перспективе.</p></div>
+                `
+            },
+            {
+                id: 2, tag: "Конструкция и цены",
+                title: "От чего зависит цена блок контейнера: разбираем ценообразование модульных зданий",
+                date: "15.08.2026", time: "6 минут чтения", img: imagePaths[1],
+                desc: "Сравнение стоимости материалов. За что стоит доплатить, а на чем можно сэкономить при заказе модульного здания.",
+                content: `
+                    <div class="info-box"><div class="info-box-header"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>Коротко о главном</div><ul class="custom-list"><li>До 80% итоговой стоимости формируют качество металла и утеплитель.</li><li>Прямой заказ у производителя исключает торговые наценки посредников.</li><li>Средняя <strong>модульное здание цена за м2</strong> зависит от класса внутренней отделки.</li></ul></div>
+                    <p>При подготовке проектной документации на обустройство строительной площадки или коммерческого объекта заказчики часто сталкиваются с парадоксом: визуально одинаковые железные вагончики могут отличаться в цене в полтора-два раза. Желание сэкономить понятно, но почему так происходит и на чем экономить категорически нельзя?</p>
+                    <p>В этой статье мы подробно разберем, как формируется <strong>блок контейнер цена</strong> и из каких неочевидных элементов складывается итоговый чек завода-изготовителя.</p>
+                    <h2>Главные факторы ценообразования</h2>
+                    <p>Многие предприниматели полагают, что <strong>стоимость металлической бытовки</strong> зависит исключительно от аппетитов продавца. На практике же львиную долю прайса составляет материалоемкость конструкции. Если производитель использует тонкий гнутый профиль вместо полноценного швеллера (100–120 мм), конструкция обойдется дешевле, но деформируется при первой же перевозке (подробнее о логистике читайте в статье про <a class="seo-link" onclick="openArticle(9)">габариты манипуляторов</a>).</p>
+                    <p>Второй критический фактор — изоляция. Качественная <strong>смета на блок контейнер</strong> обязательно включает базальтовые минеральные плиты (минимум 100 мм), ветрозащиту и пароизоляционные мембраны. Замена их на дешевый пенопласт снижает цену, но делает помещение пожароопасным и непригодным для зимней эксплуатации.</p>
+                    <h2>Отделка и техническое оснащение</h2>
+                    <p>Итоговая <strong>модульное здание цена за м2</strong> может значительно вырасти, если стандартная строительная раздевалка превращается в современный мобильный офис. Использование МДФ-панелей, коммерческого линолеума, скрытой ГОСТ-проводки в кабель-каналах и установка панорамных ПВХ-окон прибавляют к базовой стоимости от 20 до 40% (о таких решениях мы писали в обзоре <a class="seo-link" onclick="openArticle(6)">быстровозводимых офисов</a>).</p>
+                    <p>Чтобы не переплачивать перекупщикам на строительных рынках, оптимально покупать <strong>блок контейнер от производителя</strong>. Это гарантирует прозрачность комплектации и возможность внести изменения в планировку на этапе сборки каркаса.</p>
+                    <div class="info-box"><div class="info-box-header"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>Честные цены от компании АСТРА</div><p>На собственном производстве компании АСТРА мы каждый день видим последствия попыток сэкономить на базовых материалах. Наша философия иная: качество — наш бескомпромиссный стандарт. Мы не используем «фольгированный» металл и дешевые аналоги утеплителя. АСТРА предлагает честное ценообразование: вы платите за мощный стальной каркас, строгую геометрию и долговечность, чтобы ваш бизнес работал без простоев и скрытых ремонтов.</p></div>
+                `
+            },
+            {
+                id: 3, tag: "Конструкция и цены",
+                title: "Срок службы металлического блок контейнера: как выбрать строение на десятилетия",
+                date: "20.08.2026", time: "5 минут чтения", img: imagePaths[2],
+                desc: "Факторы долговечности: чем отличаются деревянные бытовки от стальных модулей АСТРА и анализ антикоррозийной защиты.",
+                content: `
+                    <div class="info-box"><div class="info-box-header"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>Коротко о главном</div><ul class="custom-list"><li>Деревянные щитовые вагончики рассыхаются и служат не более 3–5 лет.</li><li>Реальный <strong>срок эксплуатации модульного здания</strong> из стали достигает 20-25 лет.</li><li>Главный секрет прочности — антикоррозийная защита скрытых узлов.</li></ul></div>
+                    <p>При закупке временных зданий для обустройства удаленных объектов главный страх любого подрядчика — что новая инфраструктура проржавеет или перекосится после первой же зимы. Деревянные строения действительно живут недолго: они боятся влаги, гнили и динамических нагрузок. С цельнометаллическими решениями ситуация кардинально иная.</p>
+                    <p>Давайте выясним, какой реальный <strong>срок службы блок контейнера</strong> и какие технические нюансы на этапе сборки гарантируют его долговечность.</p>
+                    <h2>Почему сталь побеждает время?</h2>
+                    <p>Современная <strong>долговечность металлической бытовки</strong> обусловлена физическими свойствами материалов. В отличие от дерева, сталь обладает прогнозируемой несущей способностью. Если конструкция сварена правильно, она выдерживает десятки циклов погрузки-разгрузки краном, не нарушая внутреннюю геометрию.</p>
+                    <p>Основой выступает <strong>надежный вагончик из швеллера</strong> (профиль П-образного сечения толщиной от 100 мм), формирующий жесткий скелет. Именно этот каркас принимает на себя все нагрузки при транспортировке и позволяет возводить многоэтажные комплексы (подробнее о модульных городках читайте в статье про <a class="seo-link" onclick="openArticle(15)">общежития для рабочих</a>).</p>
+                    <h2>Защита от коррозии и климата</h2>
+                    <p>Чтобы стальной каркас не превратился в труху, критически важна профессиональная <strong>антикоррозийная обработка каркаса</strong>. На хорошем производстве металл предварительно зачищают, покрывают алкидными грунтами и промышленными эмалями. Внешняя обшивка из оцинкованного профлиста с полимерным покрытием берет на себя удар осадков и ультрафиолета.</p>
+                    <p>Срок жизни конструкции также сильно зависит от правильной подготовки площадки: если поставить железо в лужу, дно сгниет за пару лет (о том, как этого избежать, мы писали в материале про <a class="seo-link" onclick="openArticle(7)">выбор правильного фундамента</a>).</p>
+                    <div class="info-box"><div class="info-box-header"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>Надежность от компании АСТРА</div><p>Специалисты компании АСТРА работают на стыке современной инженерии и реального строительства. Мы знаем, что модульные здания — это не просто железные коробки, а жизненно важная инфраструктура предприятия. Постоянное внедрение новых технологий защиты металла позволяет нам создавать изделия, способные служить десятилетиями. АСТРА берет на себя ответственность за каждый сварной шов, чтобы вы могли уверенно развивать свои проекты.</p></div>
+                `
+            },
+            {
+                id: 4, tag: "Комфорт и зима",
+                title: "Зимняя бытовка для проживания: как не замерзнуть на объекте в минусовую температуру",
+                date: "25.08.2026", time: "6 минут чтения", img: imagePaths[3],
+                desc: "Разбор толщины утеплителя, поддерживаемых оконных систем и инструментов эффективного отопления.",
+                content: `
+                    <div class="info-box"><div class="info-box-header"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>Коротко о главном</div><ul class="custom-list"><li>Базальтовая вата — лучший выбор изоляции благодаря своей плотности.</li><li>Толщина контура для средней полосы должна составлять не менее 100 мм.</li><li>Качественная <strong>зимняя бытовка для проживания</strong> обязательно имеет тамбур-шлюз.</li></ul></div>
+                    <p>Строительные, дорожные и производственные работы не останавливаются с приходом холодов. Однако организовать комфортный быт для бригад зимой — задача со звездочкой. Обычный металлический блок без должной подготовки моментально превратится в промерзший холодильник.</p>
+                    <p>В этом материале мы разбираемся, чем профессиональная <strong>утепленная бытовка для рабочих</strong> отличается от летней раздевалки и на какие характеристики смотреть перед оформлением заказа.</p>
+                    <h2>Пирог утепления: толщина и материалы</h2>
+                    <p>Ключевой фактор выживания в минус тридцать — это теплоизоляционный контур. Если вы хотите <strong>утепленный блок контейнер купить</strong> и не разориться на счетах за электроэнергию, откажитесь от дешевой рулонной стекловаты (она сползает по стенам за пару лет).</p>
+                    <p>Правильный <strong>зимний вагончик бытовка</strong> изолируется негорючими базальтовыми плитами высокой плотности. Для комфортного нахождения людей толщина минеральной ваты должна составлять от 100 мм (стены, потолок и пол). В северных регионах этот параметр увеличивают до 150 мм. Обязательное условие — монтаж пароизоляционных мембран, которые отводят влагу от дыхания и не дают утеплителю намокнуть.</p>
+                    <h2>Отопление и отсечение холода</h2>
+                    <p>Даже самый толстый слой минеральной ваты будет бесполезен при наличии «мостиков холода» и сквозняков. Надежное <strong>отопление в модульном здании</strong> реализуется через настенные электрические конвекторы (1.5–2 кВт), подключенные через выделенный автомат защиты (о правилах электрики мы писали в обзоре <a class="seo-link" onclick="openArticle(16)">комплектации модулей</a>).</p>
+                    <p>Чтобы ледяной воздух с улицы не выдувал накопленное тепло при каждом открытии двери, на входе обязательно устанавливается тепловой шлюз (варианты таких планировок мы детально разбирали в статье про <a class="seo-link" onclick="openArticle(8)">зонирование пространства с тамбуром</a>).</p>
+                    <div class="info-box"><div class="info-box-header"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>Тепловые стандарты компании АСТРА</div><p>Проектируя решения для суровых климатических условий, инженеры компании АСТРА прорабатывают каждую деталь: от герметизации стального каркаса до монтажа двухкамерных стеклопакетов. Для нас качество и комфорт людей — это основа. Команда АСТРА создает утепленные инфраструктурные объекты, в которых безопасно работать и полноценно отдыхать после тяжелой смены. С нашими вагончиками вы забудете о промерзших углах и конденсате.</p></div>
+                `
+            },
+            {
+                id: 5, tag: "Бизнес и офисы",
+                title: "Модульные здания для бизнеса: от шиномонтажа до павильона — как быстро запустить проект",
+                date: "28.08.2026", time: "5 минут чтения", img: imagePaths[4],
+                desc: "Для каких коммерческих ниш подходят быстровозводимые решения и как они помогают экономить на старте.",
+                content: `
+                    <div class="info-box"><div class="info-box-header"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>Коротко о главном</div><ul class="custom-list"><li>Сборка и монтаж коммерческого модуля занимает всего несколько дней.</li><li>Конструкции не требуют оформления как объекты капитального строительства.</li><li>Быстрый переезд торговой точки при неудачном выборе локации.</li></ul></div>
+                    <p>Запуск новой торговой точки, кофейни или автосервиса часто упирается в долгие сроки капитального строительства, заливку бетона и сложный бюрократический процесс получения разрешительных документов. Современной альтернативой тяжелой стройке стали <strong>модульные здания для бизнеса</strong>, которые позволяют начать работу буквально через пару недель после утверждения эскиза.</p>
+                    <p>В этой статье мы рассмотрим, для каких коммерческих ниш идеально подходят сборно-разборные конструкции и как они экономят бюджет на старте.</p>
+                    <h2>Ниши для быстровозводимых павильонов</h2>
+                    <p>Главное преимущество технологии — абсолютная мобильность. Если трафик на выбранной улице оказался низким, <strong>коммерческий блок контейнер</strong> можно оперативно погрузить на манипулятор и перевезти на более выгодное место (подробнее о логистике читайте в статье про <a class="seo-link" onclick="openArticle(9)">габариты перевозки</a>).</p>
+                    <p>Самые популярные форматы использования модулей в малом бизнесе:</p>
+                    <ul class="custom-list">
+                        <li><strong>Розничная торговля:</strong> Многие предприниматели предпочитают <strong>модульный павильон купить</strong> для организации продуктовых мини-маркетов, кофеен или аптечных пунктов. Благодаря врезке панорамных окон и обшивке фасадов композитными панелями, они визуально неотличимы от престижных стационарных зданий.</li>
+                        <li><strong>Автоуслуги:</strong> Стандартный <strong>блок контейнер под шиномонтаж</strong> или мини-автомойку — это абсолютная классика придорожной инфраструктуры. Усиленный стальной каркас легко справляется с вибрациями от балансировочных станков и компрессоров.</li>
+                        <li><strong>Сфера услуг:</strong> Типовая <strong>бытовка под магазин</strong> легко перепрофилируется в пункт выдачи заказов (ПВЗ), мастерскую по ремонту техники или парикмахерскую.</li>
+                    </ul>
+                    <div class="info-box"><div class="info-box-header"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>Коммерческие решения от компании АСТРА</div><p>Создавая технологичные здания, команда АСТРА отлично понимает: для предпринимателя каждый день простоя — это упущенная прибыль. Мы занимаемся производством нестандартных решений специально под задачи бизнеса. Заказывая павильон в АСТРА, вы получаете объект «под ключ»: с грамотной планировкой, ГОСТ-электрикой и эстетичным фасадом. Мы берем на себя техническую часть, чтобы вы могли уверенно развивать свое дело.</p></div>
+                `
+            },
+            {
+                id: 6, tag: "Бизнес и офисы",
+                title: "Быстровозводимые модульные офисы: современное решение для штаба стройки и отдела продаж",
+                date: "02.09.2026", time: "5 минут чтения", img: imagePaths[5],
+                desc: "Отличие офисного модуля от раздевалки: панорамные окна, внутренняя отделка и эргономика рабочего пространства.",
+                content: `
+                    <div class="info-box"><div class="info-box-header"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>Коротко о главном</div><ul class="custom-list"><li>Офисные модули формируют лицо компании перед клиентами на объекте.</li><li>В отделке применяются износостойкие панели ЛДСП и коммерческий линолеум.</li><li>Интеграция скрытой проводки, IT-сетей и систем кондиционирования.</li></ul></div>
+                    <p>Эффективная работа инженерно-технического состава на масштабном объекте или менеджеров в удаленном отделе продаж невозможна без комфортных условий. Сидеть в темном, продуваемом вагончике за ноутбуком не только физически тяжело, но и катастрофически вредит имиджу девелопера в глазах потенциальных покупателей недвижимости.</p>
+                    <p>Именно поэтому сегодня профильные подрядчики выбирают <strong>быстровозводимые модульные офисы</strong>. Давайте разберем, как правильно организовать полноценное рабочее пространство на базе стальных контейнеров.</p>
+                    <h2>Эстетика и эргономика: отличия от раздевалки</h2>
+                    <p>Если стандартный вагончик для бригады должен быть в первую очередь теплым и вандалоустойчивым (о них мы писали в <a class="seo-link" onclick="openArticle(1)">статье по выбору строительных бытовок</a>), то <strong>блок контейнер под офис</strong> отвечает более высоким стандартам эргономики.</p>
+                    <p>Во-первых, это внешний вид фасада. Чтобы <strong>модульное здание штаб стройки</strong> выглядело современно и презентабельно, стандартный оцинкованный профлист часто заменяют на архитектурные гладкие панели, планкен или масштабное панорамное остекление. Внутри черновую ДВП-плиту вытесняет чистовая отделка: моющиеся панели ЛДСП, подвесные акустические потолки Армстронг со встроенными LED-панелями и ровный пол под офисные кресла.</p>
+                    <p>Во-вторых, инженерное обеспечение. Прежде чем <strong>офисная бытовка купить</strong>, необходимо продумать расположение рабочих мест. В качественный <strong>рабочий модуль с окнами</strong> закладывается усиленная скрытая проводка в кабель-каналах под оргтехнику, розетки для локальных IT-сетей и усиленные закладные рамы под монтаж тяжелых сплит-систем кондиционирования.</p>
+                    <div class="info-box"><div class="info-box-header"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>Офисные решения от компании АСТРА</div><p>Обращаясь напрямую к производителю АСТРА, вы минуете наценки перекупщиков и получаете надежные здания из первых рук. Наш принцип — системность и профессионализм. Мы знаем, что мобильный офис — это визитная карточка вашего бизнеса на строительной площадке. Команда АСТРА реализует проекты любой сложности, интегрируя передовые материалы отделки в мощный стальной каркас, чтобы ваши сотрудники работали с максимальной отдачей.</p></div>
+                `
+            },
+            {
+                id: 7, tag: "Логистика и сборка",
+                title: "Какой фундамент нужен для бытовки: как избежать перекоса дверей и просадки",
+                date: "05.09.2026", time: "5 минут чтения", img: imagePaths[6],
+                desc: "Обзор фундаментов: бетонные блоки, винтовые сваи и деревянный брус. Грамотная подготовка площадки.",
+                content: `
+                    <div class="info-box"><div class="info-box-header"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>Коротко о главном</div><ul class="custom-list"><li>Установка контейнера на открытый грунт приводит к стремительной коррозии дна.</li><li>Бетонные блоки ФБС — самый дешевый вариант для ровных и твердых участков.</li><li>Для сложного рельефа и болотистых почв применяются стальные винтовые сваи.</li></ul></div>
+                    <p>Одно из ключевых преимуществ сборных модульных строений заключается в том, что для них не требуется заливать массивный и дорогостоящий железобетонный монолит. Однако это вовсе не означает, что многотонный вагончик можно просто выгрузить на мягкий газон или суглинок.</p>
+                    <p>В этой инженерной статье мы подробно разберем, <strong>какой фундамент нужен для бытовки</strong>, чтобы спустя несколько месяцев ее каркас не повело, а двери не заклинило от перекоса.</p>
+                    <h2>Зачем изолировать металл от земли?</h2>
+                    <p>Если <strong>установка блок контейнера</strong> произведена без опор напрямую на грунт, последствия будут катастрофическими. Почва накапливает влагу, которая провоцирует быструю коррозию нижнего швеллера и гниение чернового деревянного пола. Кроме того, сезонное пучение грунта неравномерно приподнимает углы здания (о том, как важен прочный каркас для сопротивления деформациям, мы писали в <a class="seo-link" onclick="openArticle(3)">статье про срок службы</a>).</p>
+                    <h2>Популярные решения для основания</h2>
+                    <p>Качественная <strong>подготовка площадки под бытовку</strong> начинается со снятия 10-15 см плодородного слоя почвы, укладки геотекстиля и засыпки дренажной подушки из щебня с песком.</p>
+                    <p>Далее выбирается тип точечного основания:</p>
+                    <ul class="custom-list">
+                        <li><strong>Бетонные блоки:</strong> Полнотелые <strong>блоки для фундамента бытовки</strong> (размером 20х20х40 см) устанавливаются по углам и периметру с шагом около 1.5–2 метров. Это надежный и бюджетный метод для сухих участков с плотным грунтом.</li>
+                        <li><strong>Винтовые сваи:</strong> Если на объекте перепады высот или нестабильный грунт (торфяники), применяют <strong>винтовые сваи под вагончик</strong>. Металлические трубы вкручиваются ниже глубины промерзания почвы, гарантируя абсолютную стабильность конструкции в любую погоду.</li>
+                    </ul>
+                    <div class="info-box"><div class="info-box-header"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>Монтажные работы от компании АСТРА</div><p>Даже самый качественный блок-контейнер потеряет свои свойства при халатной установке. Специалисты компании АСТРА реализуют проекты комплексно: от геотехнического анализа грунта до финальной выгрузки манипулятором. Мы ценим инженерную точность и не полагаемся на случайность. АСТРА — это надежные решения: мы готовим основания, которые выдерживают максимальные нагрузки, чтобы вы не тратили ресурсы на исправление чужих ошибок.</p></div>
+                `
+            },
+            {
+                id: 8, tag: "Комфорт и зима",
+                title: "Планировка бытовки с тамбуром: как зонировать пространство для комфортного проживания",
+                date: "08.09.2026", time: "5 минут чтения", img: imagePaths[7],
+                desc: "Зачем нужен тамбур-шлюз? Рассматриваем популярные варианты «распашонка» и модули с санитарными узлами.",
+                content: `
+                    <div class="info-box"><div class="info-box-header"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>Коротко о главном</div><ul class="custom-list"><li>Тамбур работает как тепловой шлюз, критически важный для зимнего периода.</li><li>Формат «распашонка» позволяет изолировать две бригады под одной крышей.</li><li>Внутренние перегородки не нарушают общую жесткость стального каркаса.</li></ul></div>
+                    <p>Когда перед руководством встает задача организовать проживание сотрудников прямо на строительной площадке, недостаточно просто заказать пустую железную коробку и расставить по углам двухъярусные кровати. Спецодежда, уличная грязь, холодный ветер и отсутствие приватности моментально сказываются на моральном состоянии бригады.</p>
+                    <p>В этой статье мы разберем, как правильная <strong>планировка бытовки с тамбуром</strong> решает вопросы гигиены и сохранения тепла.</p>
+                    <h2>Зачем съедать пространство коридором?</h2>
+                    <p>Самая частая ошибка новичков — заказ открытого помещения ради экономии квадратных метров. Однако <strong>жилой блок контейнер планировка</strong> которого лишена входного буфера, зимой превращается в ледяную пещеру. Тамбур (глубиной около 1–1.2 метра) выполняет роль теплового тамбур-шлюза: он отсекает морозный воздух при открытии уличной двери, а также служит отличной зоной для сушки грязной рабочей обуви (о других аспектах зимнего комфорта читайте в <a class="seo-link" onclick="openArticle(4)">статье про утепление</a>).</p>
+                    <h2>Эффективное зонирование вагончика</h2>
+                    <p>Грамотное <strong>зонирование вагончика</strong> позволяет объединить несколько функций в одном объеме. Самый востребованный формат на рынке — это <strong>бытовка распашонка купить</strong> которую стремятся почти все крупные девелоперы. В такой конфигурации вход расположен по центру длинной стороны (в тамбур), из которого ведут две межкомнатные двери направо и налево в абсолютно изолированные жилые комнаты.</p>
+                    <p>Для полностью автономных объектов часто проектируют <strong>блок контейнер с санузлом и душем</strong>, где одна из комнат отводится под влагостойкую инженерную зону с насосом и водонагревателем (подробнее о таких модулях мы писали в <a class="seo-link" onclick="openArticle(12)">специальном обзоре сантехнических зданий</a>).</p>
+                    <div class="info-box"><div class="info-box-header"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>Проектирование от компании АСТРА</div><p>На производстве компании АСТРА мы регулярно помогаем клиентам найти идеальный баланс между жилой площадью и техническими зонами в рамках стандартных габаритов 6х2.4 метра. Наша команда не просто варит металл — мы создаем продуманную инфраструктуру. АСТРА разрабатывает планировки, где каждый квадратный сантиметр работает на ваш комфорт, сохраняя при этом заводскую прочность и мобильность конструкции.</p></div>
+                `
+            },
+            {
+                id: 9, tag: "Логистика и сборка",
+                title: "Габариты блок контейнера для перевозки: что нужно знать перед доставкой на объект",
+                date: "10.09.2026", time: "5 минут чтения", img: imagePaths[8],
+                desc: "Как перевезти блок-контейнер без штрафов. Стандартные транспортные размеры и требования к разгрузке манипулятором.",
+                content: `
+                    <div class="info-box"><div class="info-box-header"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>Коротко о главном</div><ul class="custom-list"><li>Стандартная ширина модуля не превышает 2.45 метра для законной перевозки.</li><li>Превышение транспортных габаритов ведет к огромным штрафам от ГИБДД.</li><li>Для монтажа необходим кран-манипулятор и отсутствие низких проводов ЛЭП.</li></ul></div>
+                    <p>Приобретение готового модульного здания на заводе — это лишь половина пройденного пути. Вторая, и порой более сложная техническая задача — безопасно доставить многотонную конструкцию на строительную площадку и ювелирно выгрузить ее на заранее подготовленный фундамент.</p>
+                    <p>Давайте подробно разберем стандартные <strong>габариты блок контейнера для перевозки</strong> и строгие правила транспортной логистики, нарушение которых грозит подрядчикам колоссальными издержками.</p>
+                    <h2>Дорожные стандарты и экономия на логистике</h2>
+                    <p>Чтобы понять, <strong>как перевезти блок контейнер</strong> без оформления кипы разрешительных документов, необходимо обратиться к ПДД. По закону, если ширина перевозимого груза превышает 2.55 метра, он классифицируется как негабаритный. Это означает обязательное присутствие машин сопровождения (с проблесковыми маячками) и кратное удорожание рейса.</p>
+                    <p>Именно поэтому добросовестные заводы выпускают модули в строгих рамках: ширина варьируется в районе 2.4 метра, <strong>транспортировка модульного здания</strong> длиной 6 метров легко осуществляется в кузове стандартного шоссейного грузовика (бортового длинномера или манипулятора).</p>
+                    <h2>Нюансы разгрузки и подъездных путей</h2>
+                    <p>Чаще всего для логистики используют грузовики с крано-манипуляторной установкой (КМУ). Итоговая <strong>доставка бытовки манипулятором цена</strong> всегда зависит от удаленности вашего объекта и качества подъездных грунтовых дорог. Многотонный грузовик с крано-манипуляторной установкой (КМУ) легко увязнет в весенней распутице. Более того, стрела манипулятора не сможет работать, если прямо над зоной выгрузки проходят низковольтные линии электропередач (о том, как правильно подготовить площадку, мы писали в <a class="seo-link" onclick="openArticle(7)">статье про установку фундаментов</a>).</p>
+                    <p>Чтобы избежать логистического хаоса, когда транспортная компания сваливает вину на производителя, эксперты рекомендуют сразу <strong>купить бытовку с доставкой и установкой</strong> в рамках единого договора подряда.</p>
+                    <div class="info-box"><div class="info-box-header"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>Логистика «Под Ключ» от АСТРА</div><p>Практика компании АСТРА доказывает: рассогласованность между цехом сборки и наемными логистами всегда бьет по карману конечного заказчика. Мы берем на себя полную ответственность за реализацию проекта. АСТРА обеспечивает бережную транспортировку усиленных каркасов и точный монтаж на вашем объекте. Мы решаем транспортные задачи комплексно, чтобы вы получили готовое к эксплуатации здание строго в согласованный день.</p></div>
+                `
+            },
+            {
+                id: 10, tag: "Логистика и сборка",
+                title: "Построить бытовку или купить готовую: считаем реальные затраты и экономию",
+                date: "12.09.2026", time: "5 минут чтения", img: imagePaths[9],
+                desc: "Скрытые проблемы самостоятельной сборки каркаса. Анализ цен на стройматериалы в розницу и риски потери качества.",
+                content: `
+                    <div class="info-box"><div class="info-box-header"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>Коротко о главном</div><ul class="custom-list"><li>Розничная закупка металла и утеплителя всегда дороже заводского опта.</li><li>Для качественной сварки несущих узлов требуются стапели и опыт.</li><li>Заводская сборка гарантирует строгую диагональ и гидроизоляцию.</li></ul></div>
+                    <p>На старте нового строительного сезона или при обустройстве личного дачного участка многие мастера задаются амбициозным вопросом: зачем переплачивать профильным заводам, если можно вооружиться сварочным аппаратом и сколотить всё своими руками?</p>
+                    <p>Давайте с калькулятором в руках взвесим все «за» и «против» и окончательно решим, что выгоднее для вашего кошелька и нервов: <strong>построить бытовку или купить готовую</strong>.</p>
+                    <h2>Иллюзия экономии: скрытые расходы самостроя</h2>
+                    <p>На первый взгляд, план действий кажется элементарным: находим в интернете любительские <strong>чертежи блок контейнера из металла</strong>, едем на ближайшую металлобазу за швеллером, покупаем профлист и начинаем резать.</p>
+                    <p>Однако на этапе реализации <strong>самодельный строительный вагончик</strong> сталкивается с суровой реальностью рынка стройматериалов. Крупные производства закупают стальной прокат, базальтовую вату и пиломатериалы фурами по оптовым ценам. Вы же будете оплачивать розничную наценку (около 30-40%) и многократную доставку «Газелями». Кроме того, <strong>сборка металлической бытовки</strong> требует ровного бетонного стапеля, иначе конструкция получится кривой («ромбом»), и вы никогда не сможете герметично вставить ПВХ-окна или закрыть стальную дверь.</p>
+                    <h2>Заводской стандарт качества</h2>
+                    <p>Сложив стоимость испорченного в процессе обучения металла, сожженных электродов и потерянных недель личного времени, подавляющее большинство строителей признает: <strong>купить бытовку под ключ недорого</strong> напрямую с конвейера — это гораздо более рациональное решение. (О том, сколько лет способна простоять заводская конструкция, мы писали в <a class="seo-link" onclick="openArticle(3)">материале про срок службы бытовок</a>).</p>
+                    <div class="info-box"><div class="info-box-header"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>Стандарты качества компании АСТРА</div><p>В цехах компании АСТРА мы регулярно занимаемся демонтажом кустарных изделий, которые заказчики пытались собрать «на коленке». Мы твердо уверены: создание надежных модульных зданий — это высокотехнологичный конвейерный процесс. Выбирая продукцию АСТРА, вы платите не за железо, а за инженерную точность, герметичность кровли и профессиональную гордость нашей команды. Доверьте инфраструктуру экспертам и сосредоточьтесь на своем бизнесе.</p></div>
+                `
+            },
+            {
+                id: 11, tag: "Конструкция и цены",
+                title: "Металлический блок контейнер для дачи: надежная альтернатива деревянному сараю",
+                date: "15.09.2026", time: "4 минуты чтения", img: imagePaths[10],
+                desc: "Надежная антивандальная альтернатива деревянному сараю. Использование под хозблок или временное жилье.",
+                content: `
+                    <div class="info-box"><div class="info-box-header"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>Коротко о главном</div><ul class="custom-list"><li>Металлокаркас не подвержен гниению, грибку и нападению термитов.</li><li>Стальная дверь и профлист обеспечивают отличную антивандальную защиту.</li><li>Высокая ликвидность на вторичном рынке после завершения стройки.</li></ul></div>
+                    <p>Новоиспеченные владельцы загородных участков всегда сталкиваются с первичной проблемой: куда сложить дорогостоящий бензоинструмент, бетономешалку и мешки с цементом, пока возводятся стены основного коттеджа? Традиционным выходом на протяжении десятилетий оставались деревянные щитовые постройки.</p>
+                    <p>В этой статье мы рассмотрим, почему эти архаичные решения уходят в прошлое, и почему современный <strong>металлический блок контейнер для дачи</strong> становится новым стандартом загородного благоустройства.</p>
+                    <h2>Очевидные минусы древесины</h2>
+                    <p>Обычный деревянный сарай требует бесконечного обслуживания: древесину необходимо регулярно пропитывать антисептиками от короеда, перекрашивать облупившийся фасад и спасать от почвенной влаги. Более того, вскрыть деревянную дверь гвоздодером для злоумышленника — задача пяти секунд.</p>
+                    <p>В противовес этому, <strong>железный вагончик для участка</strong>, сваренный из мощного стального уголка и обшитый профилированным листом с толстым полимерным покрытием, лишен всех этих недостатков и готов противостоять как погодным аномалиям, так и вандалам.</p>
+                    <h2>Многофункциональность модулей</h2>
+                    <p>На базе стандартного каркаса можно реализовать абсолютно любой проект:</p>
+                    <ul class="custom-list">
+                        <li><strong>Надежное склад:</strong> Если вам нужен непробиваемый <strong>хозблок из блок контейнера</strong> для хранения садовой техники.</li>
+                        <li><strong>Временный дом:</strong> Полноценная утепленная <strong>дачная бытовка под ключ</strong> позволит семье с комфортом ночевать на природе с ранней весны до поздней осени (подробнее о параметрах минеральной ваты мы писали в <a class="seo-link" onclick="openArticle(4)">статье про зимнее утепление</a>).</li>
+                    </ul>
+                    <p>Если вы решили <strong>купить надежную бытовку на дачу</strong>, вы делаете грамотную инвестицию. Когда основной дом будет сдан, вы сможете либо переоборудовать ее в летнюю кухню, либо выгодно продать на вторичном рынке.</p>
+                    <div class="info-box"><div class="info-box-header"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>Дачные решения от компании АСТРА</div><p>Мы в компании АСТРА понимаем, что загородная недвижимость должна приносить радость, а не проблемы с ремонтом. Наша философия качества применима не только к крупным промышленным объектам, но и к частным заказам. АСТРА производит компактные, эстетичные и абсолютно надежные дачные модули, которые гармонично впишутся в ваш ландшафт и надежно сохранят имущество.</p></div>
+                `
+            },
+            {
+                id: 12, tag: "Комфорт и зима",
+                title: "Модульное здание санузел: гигиена и комфорт на строительной площадке",
+                date: "16.09.2026", time: "5 минут чтения", img: imagePaths[11],
+                desc: "Организация санитарно-гигиенических условий. Требования к влагостойкой внутренней отделке и скрытым коммуникациям.",
+                content: `
+                    <div class="info-box"><div class="info-box-header"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>Коротко о главном</div><ul class="custom-list"><li>Соблюдение норм охраны труда на крупных производственных площадках.</li><li>Обязательное использование ПВХ-панелей и гидроизоляции пола.</li><li>Установка накопительных водонагревателей и систем вытяжной вентиляции.</li></ul></div>
+                    <p>Грамотная организация санитарно-гигиенических условий на удаленных буровых станциях или строительных объектах — это не просто забота о комфорте персонала, но и прямое жесткое требование государственных норм охраны труда. Использование всем известных синих пластиковых биотуалетов оправдано лишь на короткий срок (пару недель). Для длительных инженерных проектов требуются полноценные отапливаемые помещения с подключением к водопроводу и септику.</p>
+                    <p>В этой статье разберем, как правильно спроектировать <strong>модульное здание санузел</strong> и на какие специфические технические детали обратить внимание при покупке.</p>
+                    <h2>Защита от влаги и коррозии</h2>
+                    <p>Главный, безжалостный враг любого санитарного помещения — это постоянный конденсат и вода. Если обычный вагончик, обшитый изнутри дешевым оргалитом или ДВП, использовать как помывочную, он покроется черной плесенью и сгниет за два месяца.</p>
+                    <p>Поэтому, если вы планируете <strong>блок контейнер душевая купить</strong>, критически важно изучить спецификацию внутренней отделки. Стены и потолок должны быть зашиты гладкими влагостойкими материалами (моющиеся ПВХ-панели или оцинкованный лист). На полу обязательна заливка битумной мастики, укладка коммерческого линолеума с проваренными швами (или рифленого алюминия) и монтаж сливных трапов.</p>
+                    <h2>Инженерная начинка</h2>
+                    <p>Современный <strong>вагончик туалет для строителей</strong> представляет собой сложный технологический узел. В него интегрируют скрытую полипропиленовую разводку труб, устанавливают душевые поддоны, мощный <strong>душевой модуль с водонагревателем</strong> (бойлеры от 100 литров) и влагозащищенные светодиодные светильники (IP65+).</p>
+                    <p>Именно из-за дорогостоящей технической начинки и фаянса <strong>сантехническая бытовка цена</strong> которой заметно выше обычного жилого модуля, требует профессиональной заводской сборки (подробнее о формировании цен мы писали в <a class="seo-link" onclick="openArticle(2)">аналитике прайс-листов</a>).</p>
+                    <div class="info-box"><div class="info-box-header"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>Инженерные санитарные блоки АСТРА</div><p>Попытки переоборудовать жилую бытовку под душевую силами неквалифицированных рабочих всегда заканчиваются затоплением утеплителя. Инженеры компании АСТРА проектируют специализированные санитарные комплексы, где каждая труба опрессована, а стыки герметизированы. Выбирая решения от АСТРА, вы получаете объект, готовый к безопасной работе с водой с первого дня эксплуатации.</p></div>
+                `
+            },
+            {
+                id: 13, tag: "Бизнес и офисы",
+                title: "Блок контейнер пост охраны: как оборудовать надежное КПП на объекте",
+                date: "18.09.2026", time: "5 минут чтения", img: imagePaths[12],
+                desc: "Конструктивные особенности проходных. Антивандальность, увеличенная площадь остекления и умное зонирование.",
+                content: `
+                    <div class="info-box"><div class="info-box-header"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>Коротко о главном</div><ul class="custom-list"><li>Максимальный круговой обзор территории благодаря панорамным окнам.</li><li>Антивандальная защита фасадов и стальные решетки безопасности.</li><li>Интеграция систем видеонаблюдения и турникетов (СКУД).</li></ul></div>
+                    <p>Любая комплексная безопасность и строгий контроль доступа на территорию логистического хаба, коттеджного поселка или строительной площадки начинаются с контрольно-пропускного пункта. Сотрудник службы безопасности физически не может эффективно нести круглосуточное дежурство в неотапливаемой фанерной будке.</p>
+                    <p>Давайте подробно разберем, каким инженерным стандартам должен отвечать правильный <strong>блок контейнер пост охраны</strong> и какие специализированные элементы кардинально отличают его от обычной раздевалки для рабочих.</p>
+                    <h2>Панорамный обзор и безопасность периметра</h2>
+                    <p>Фундаментальная задача любой проходной — обеспечение беспрепятственного визуального контроля за периметром. Поэтому, когда профильные ЧОПы решают <strong>будка охраны купить</strong>, они ищут проекты с увеличенной площадью остекления.</p>
+                    <p>Идеальное <strong>модульное здание кпп</strong> оборудовано оконными блоками на три, а зачастую и на все четыре стороны света, что исключает слепые зоны. Окна комплектуются специальными форточками для проверки путевых листов и пропусков водителей без необходимости выхода дежурного на мороз.</p>
+                    <h2>Интеграция СКУД и проходных коридоров</h2>
+                    <p>Если на режимном объекте действует массовый пропускной трафик для сотен рабочих, проектируется специализированная <strong>бытовка проходная</strong>. Она имеет сквозной тамбур (коридор), который физически разделяет «внешнюю» улицу и «внутреннюю» территорию предприятия с установкой электронных полноростовых турникетов.</p>
+                    <p>Итоговая <strong>пост охраны цена</strong> всегда напрямую зависит от степени утепления (читайте об этом в <a class="seo-link" onclick="openArticle(4)">статье по зимним модулям</a>) и сложности интегрированных IT-систем для мониторов видеонаблюдения.</p>
+                    <div class="info-box"><div class="info-box-header"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>Решения для безопасности от АСТРА</div><p>На производственных линиях компании АСТРА мы точно знаем, что безопасность предприятия не терпит компромиссов. Мы собираем усиленные посты охраны, оснащенные антивандальными решетками и утепленными стальными дверями, которые невозможно вскрыть ломом. АСТРА закладывает в projects скрытую проводку под системы CCTV и СКУД, создавая эргономичные и теплые пространства для комфортного несения службы.</p></div>
+                `
+            },
+            {
+                id: 14, tag: "Логистика и сборка",
+                title: "Купить блок контейнер бу или новый: считаем скрытые риски и переплаты",
+                date: "20.09.2026", time: "6 минут чтения", img: imagePaths[13],
+                desc: "Сгнивший утеплитель, токсичная плесень и нарушенная геометрия швеллера в подержанных строительных конструкциях.",
+                content: `
+                    <div class="info-box"><div class="info-box-header"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>Коротко о главном</div><ul class="custom-list"><li>Свежая краска на б/у вагончике часто скрывает сгнивший утеплитель.</li><li>Нарушенная диагональ каркаса делает модуль неремонтопригодным.</li><li>Новые изделия от производителя сохраняют 80% остаточной стоимости.</li></ul></div>
+                    <p>Желание максимально оптимизировать смету на старте крупного девелоперского проекта абсолютно естественно. Когда цифры в бюджете стремительно растут, первой под нож финансового директора попадает временная инфраструктура. Именно в этот момент у снабженцев возникает огромный соблазн <strong>купить блок контейнер бу</strong> с сайтов объявлений.</p>
+                    <p>Однако, как показывает суровая практика строительного рынка, покупка «с рук» в 90% случаев оборачивается двойными финансовыми потерями. В этой статье мы вскроем главные дефекты подержанных бытовок.</p>
+                    <h2>Что скрывается под слоем свежей краски?</h2>
+                    <p>Открывая агрегаторы объявлений с мыслью <strong>бытовки строительные б бу купить</strong>, вы чаще всего видите опрятные, свежевыкрашенные синей краской фасады. Но самое важное скрыто глубоко под профлистом.</p>
+                    <p>Если предыдущая бригада нарушила целостность пароизоляционной мембраны (например, просушивая мокрую робу зимой без вентиляции), минеральная вата за пару сезонов напиталась влагой и превратилась в тяжелую, осевшую труху. Обогреть такой <strong>модульные здания бу</strong> зимой будет физически невозможно — вы будете обогревать улицу и разоряться на электрических киловаттах.</p>
+                    <h2>Критическое нарушение геометрии</h2>
+                    <p>Массовая <strong>продажа бу бытовок</strong> часто инициируется подрядчиками после того, как неопытный крановщик жестко бросил модуль на землю или поднимал его за неправильные проушины. Металлический каркас повело. В таком вагончике навсегда останутся щели в палец толщиной, а дверь придется закрывать ударом ноги (о том, как важен ровный каркас, мы писали в <a class="seo-link" onclick="openArticle(3)">статье про срок службы</a>).</p>
+                    <p>Рассматривая альтернативы, многие изучают прокат. Но текущая <strong>аренда блок контейнера цена</strong> настолько высока, что за 8-10 месяцев непрерывных выплат вы полностью покрываете стоимость нового изделия с завода, которое в итоге вам даже не принадлежит.</p>
+                    <div class="info-box"><div class="info-box-header"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>Разумные инвестиции с компанией АСТРА</div><p>Наблюдая за тем, как подрядчики бесконечно латают дыры в ржавых вагончиках, инженеры компании АСТРА настоятельно рекомендуют инвестировать в новые заводские решения. Мы предлагаем изделия с гарантированной 100% герметичностью и чистым утеплителем. Качественная бытовка от АСТРА высоко ликвидна: после сдачи объекта вы легко сможете продать её другим строителям за достойную цену.</p></div>
+                `
+            },
+            {
+                id: 15, tag: "Бизнес и офисы",
+                title: "Модульное общежитие для рабочих: как быстро построить строительный городок",
+                date: "22.09.2026", time: "5 минут чтения", img: imagePaths[14],
+                desc: "Проектирование двухэтажных модульных зданий, организация общих столовых и надежных санитарных узлов.",
+                content: `
+                    <div class="info-box"><div class="info-box-header"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>Коротко о главном</div><ul class="custom-list"><li>Экономия площади застраиваемого участка за счет многоэтажности.</li><li>Единая централизованная система инженерных коммуникаций.</li><li>Сборка полноценного жилого комплекса на 100 человек за несколько недель.</li></ul></div>
+                    <p>Когда масштаб инфраструктурного проекта или возведения жилого квартала требует присутствия сотен специалистов, хаотично разбросанные по участку одиночные железные вагончики превращаются в логистический кошмар. Одиночные боксы занимают дефицитную площадь, а подведение к каждому из них водопровода и кабелей безопасности становится невозможным.</p>
+                    <p>Единственным правильным решением для крупных девелоперов становится интегрированное <strong>модульное общежитие для рабочих</strong>. Разберем архитектурные нюансы таких городков.</p>
+                    <h2>Многоэтажность без капитального фундамента</h2>
+                    <p>Главный инженерный козырь модульной технологии — способность стального швеллера выдерживать колоссальные вертикальные нагрузки. Это позволяет проектировать и собирать полноценные <strong>двухэтажные модульные здания</strong> (а в некоторых модификациях и трехэтажные). Блок-контейнеры надежно штабелируются друг на друга, скрепляясь болтовыми соединениями, а монтажные швы утепляются и закрываются нащельниками.</p>
+                    <p>Чтобы смонтировать многоуровневый <strong>строительный городок из бытовок</strong>, не нужно рыть котлован. Достаточно отсыпать ровную площадку и установить винтовые сваи или фундаментные блоки (подробную технологию мы разбирали в <a class="seo-link" onclick="openArticle(7)">инструкции по подготовке фундамента</a>).</p>
+                    <h2>Инфраструктура внутри комплекса</h2>
+                    <p>Современный <strong>блок контейнер в два этажа</strong> — это не просто нагромождение спален. Удалив внутренние стеновые панели между соседними боксами, инженеры формируют широкие отапливаемые коридоры, просторные пищеблоки, сушильные комнаты и единые санитарно-душевые узлы (подробнее о мокрых зонах читайте <a class="seo-link" onclick="openArticle(12)">в нашем специальном обзоре</a>).</p>
+                    <p>Итоговая <strong>модульное здание общежитие цена</strong> включает не только сами контейнеры, но и сварные наружные лестницы, площадки обслуживания и возведение единой двускатной кровли над всем комплексом.</p>
+                    <div class="info-box"><div class="info-box-header"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>Строительные городки от АСТРА</div><p>Проектирование крупногабаритных многоуровневых городков — это сложная задача, требующая идеальной точности при стыковке модулей. Компания АСТРА обладает производственными мощностями для реализации таких проектов под ключ. Мы рассчитываем несущие нагрузки, интегрируем вентиляцию и соблюдаем жесткие требования пожарной безопасности. АСТРА создает комфортные вахтовые поселки, чтобы ваша команда жила в тепле и безопасности.</p></div>
+                `
+            },
+            {
+                id: 16, tag: "Комфорт и зима",
+                title: "Комплектация блок контейнера: электрика, отопление и мебель для рабочих",
+                date: "24.09.2026", time: "5 минут чтения", img: imagePaths[15],
+                desc: "Оснащение вагончика: ГОСТовская закрытая электрика, УЗО, настенные конвекторы и прочные двухъярусные кровати.",
+                content: `
+                    <div class="info-box"><div class="info-box-header"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>Коротко о главном</div><ul class="custom-list"><li>Самодельная скрутка проводов в бытовках — главная причина пожаров.</li><li>Необходима установка вводного щитка с автоматами защиты сети (УЗО).</li><li>Заводская меблировка дешевле розничных закупок в профильных магазинах.</li></ul></div>
+                    <p>Приобретая временное мобильное жилье для нужд строительной бригады, руководитель проекта должен четко осознавать: голые, пусть и хорошо утепленные стены — это лишь заготовка. Чтобы металлический модуль превратился в жилое пространство, готовое к эксплуатации с первой минуты после разгрузки с трала, его необходимо грамотно и безопасно оснастить.</p>
+                    <p>В этом финальном техническом обзоре мы расскажем, какая <strong>комплектация блок контейнера</strong> является золотым стандартом для создания комфортных условий труда.</p>
+                    <h2>Электрическая и тепловая безопасность</h2>
+                    <p>Многолетняя практика показывает: попытки сэкономить бюджет и поручить прокладку кабелей неквалифицированным разнорабочим неизбежно приводят к коротким замыканиям. Надежная <strong>электропроводка в бытовке</strong> монтируется исключительно кабелем ВВГнг (не поддерживающим горение), который убирается в пластиковые кабель-каналы или защитную гофру.</p>
+                    <p>Заводской <strong>блок контейнер с электрикой</strong> обязательно комплектуется распределительным щитком, автоматами защиты от перегрузок и двойными розетками.</p>
+                    <p>Отдельное внимание уделяется микроклимату. Безопасное <strong>отопление в модульном здании</strong> реализуется за счет установки плоских электрических конвекторов (на 1.5–2 кВт). Чтобы исключить риск их опрокидывания и возгорания, обогреватели жестко фиксируются на стенах (о том, как удержать это тепло внутри, мы подробно рассказывали в <a class="seo-link" onclick="openArticle(4)">статье о толщине минеральной ваты</a>).</p>
+                    <h2>Индустриальная меблировка</h2>
+                    <p>Завершающий штрих — эргономичная <strong>внутренняя отделка вагончика</strong> и спальные места. Для вахтовиков закупается специализированная <strong>мебель для бытовок рабочих</strong>: металлические двухъярусные кровати с усиленным каркасом, столы на металлокаркасе и шкафы для робы. Заказ этой мебели прямо на заводе-изготовителе здания обходится значительно дешевле логистики из мебельных центров.</p>
+                    <div class="info-box"><div class="info-box-header"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>Полная готовность от компании АСТРА</div><p>В компании АСТРА мы твердо убеждены: клиент не должен тратить драгоценное время на доделку и обустройство модулей на стройплощадке. Мы сдаем объекты исключительно «под ключ». Наши сертифицированные электрики монтируют безопасные сети по ГОСТ, а плотники устанавливают износостойкую мебель прямо в цеху. Заказывая бытовку в АСТРА, вы получаете изделие, к которому достаточно подвести внешний силовой кабель.</p></div>
+                `
+            }
+        ];
+
+        function renderBaseCards() {
+            const container = document.getElementById('base-cards-container');
+            let html = '';
+            const baseArticles = [articlesDB[0], articlesDB[3], articlesDB[5]];
+            baseArticles.forEach(art => {
+                html += `
+                <a class="card" onclick="openArticle(${art.id})">
+                    <div class="card-img-wrap"><img src="${art.img}" alt="Иллюстрация"></div>
+                    <div class="card-content">
+                        <div class="card-tag">${art.tag}</div>
+                        <h2 class="card-title">${art.title}</h2>
+                        <p class="card-desc">${art.desc}</p>
+                        <div class="card-meta">
+                            <span><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> ${art.date}</span>
+                            <span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> ${art.time}</span>
+                        </div>
+                        <div class="card-read">Читать материал &rarr;</div>
+                    </div>
+                </a>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function renderCards(filter = 'all', searchQuery = '') {
+            const container = document.getElementById('cards-container');
+            const resultsCount = document.getElementById('results-count');
+            
+            let filtered = articlesDB.filter(art => {
+                const matchesCategory = (filter === 'all' || art.tag === filter);
+                const matchesSearch = art.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                      art.desc.toLowerCase().includes(searchQuery.toLowerCase());
+                return matchesCategory && matchesSearch;
+            });
+
+            resultsCount.innerText = `Показано: ${filtered.length}`;
+
+            let html = '';
+            if (filtered.length === 0) {
+                html = '<div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-muted);">Ничего не найдено по вашему запросу.</div>';
+            } else {
+                filtered.forEach(art => {
+                    html += `
+                    <a class="card" onclick="openArticle(${art.id})">
+                        <div class="card-img-wrap"><img src="${art.img}" alt="Иллюстрация"></div>
+                        <div class="card-content">
+                            <div class="card-tag">${art.tag}</div>
+                            <h2 class="card-title">${art.title}</h2>
+                            <p class="card-desc">${art.desc}</p>
+                            <div class="card-meta">
+                                <span><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> ${art.date}</span>
+                                <span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> ${art.time}</span>
+                            </div>
+                            <div class="card-read">Читать материал &rarr;</div>
+                        </div>
+                    </a>`;
+                });
+            }
+            container.innerHTML = html;
+        }
+
+        function openArticle(id) {
+            const art = articlesDB.find(item => item.id === id);
+            document.getElementById('art-title').innerText = art.title;
+            document.getElementById('art-date').innerText = art.date;
+            document.getElementById('art-time').innerText = art.time;
+            document.getElementById('art-img').src = art.img;
+            document.getElementById('art-body').innerHTML = art.content;
+            
+            document.getElementById('catalog-page').style.display = 'none';
+            document.getElementById('article-page').style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+
+        function showCatalog() {
+            document.getElementById('article-page').style.display = 'none';
+            document.getElementById('catalog-page').style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+
+        let currentFilter = 'all';
+        let currentSearch = '';
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.getAttribute('data-category');
+                renderCards(currentFilter, currentSearch);
+            });
+        });
+
+        document.getElementById('search-input').addEventListener('input', (e) => {
+            currentSearch = e.target.value;
+            renderCards(currentFilter, currentSearch);
+        });
+
+        renderBaseCards();
+        renderCards();
+    </script>
+<!-- ФУТЕР САЙТА -->
+    <footer style="background: var(--card-bg); border-top: 1px solid var(--border-color); padding: 40px 20px; margin-top: 60px; text-align: center; color: var(--text-muted); font-size: 14px;">
+        <div style="max-width: 1240px; margin: 0 auto; display: flex; flex-direction: column; gap: 15px; align-items: center;">
+            <p style="font-weight: 600; color: var(--text-main);">© 2026 Компания «АСТРА». Производство и продажа модульных зданий и бытовок.</p>
+            <p>Все права защищены.</p>
+            <div style="display: flex; gap: 20px; margin-top: 10px; font-size: 13px;">
+                <a href="https://a-astra.ru/" style="color: var(--brand-teal); text-decoration: none;">Официальный сайт</a>
+                <a href="https://a-astra.ru/nasha-produktsiya" style="color: var(--brand-teal); text-decoration: none;">Каталог продукции</a>
+                <a href="https://a-astra.ru/kontakty" style="color: var(--brand-teal); text-decoration: none;">Контакты</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
